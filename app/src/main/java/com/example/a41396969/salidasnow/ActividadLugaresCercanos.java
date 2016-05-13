@@ -44,6 +44,7 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
 
         listVW = (ListView) findViewById(R.id.listVw);
         direccion = (EditText) findViewById(R.id.direccion);
+
         /*dirEncontrada = (TextView) findViewById(R.id.dirEncontrada);
         nombreRes = (TextView) findViewById(R.id.Nombre);*/
 
@@ -52,9 +53,22 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
 
     public void consultarRestaurantes(View v) {
         String url = "https://maps.googleapis.com/maps/api/geocode/json?address=";
+        Toast MToast;
         if (!direccion.getText().toString().isEmpty()) {
-            url += direccion.getText().toString();   // Copio la direccion ingresada al final de la URL
-            new GeolocalizacionTask().execute(url);  // Llamo a clase async con url
+            if (isNumeric(direccion.getText().toString())) {
+                MToast = Toast.makeText(this, "No ingrese solo numeros en la direccion", Toast.LENGTH_SHORT);
+                MToast.show();
+            }else {
+                url += direccion.getText().toString() ;  // Copio la direccion ingresada al final de la URL
+                url += "&components=country:AR&key=AIzaSyA0T6Xd7zuyregCBfyon2axZWcgs1CUq-A";
+                new GeolocalizacionTask().execute(url);  // Llamo a clase async con url
+            }
+        } else if(direccion.getText().toString().isEmpty()){
+
+            MToast = Toast.makeText(this, "Complete los campos", Toast.LENGTH_SHORT);
+            MToast.show();
+            listVW.setAdapter(null);
+
         }
     }
 
@@ -236,5 +250,12 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
             return view;
         }
     }
-
+    public static boolean isNumeric(String str)
+    {
+        for (char c : str.toCharArray())
+        {
+            if (!Character.isDigit(c)) return false;
+        }
+        return true;
+    }
 }
