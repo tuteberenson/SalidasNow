@@ -1,23 +1,15 @@
 package com.example.a41396969.salidasnow;
 
-import android.app.DownloadManager;
-import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
-
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -36,21 +28,16 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
     TextView dirEncontrada, nombreRes;
     ListView listVW;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.actividad_lugares_cercanos);
-
         listVW = (ListView) findViewById(R.id.listVw);
         direccion = (EditText) findViewById(R.id.direccion);
 
         /*dirEncontrada = (TextView) findViewById(R.id.dirEncontrada);
         nombreRes = (TextView) findViewById(R.id.Nombre);*/
-
-
     }
-
     public void consultarRestaurantes(View v) {
         String url = "https://maps.googleapis.com/maps/api/geocode/json?address=";
         Toast MToast;
@@ -95,7 +82,7 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         Log.d("Test", "00");
-                       //String item = ((TextView)view).getText().toString();
+                        //String item = ((TextView)view).getText().toString();
                         Log.d("Test",Lrestaurants.get(position)+"");
                         Toast.makeText(getBaseContext(), Lrestaurants.get(position).nombre +"", Toast.LENGTH_LONG).show();
                         Log.d("Test", "02");
@@ -182,72 +169,6 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
                 Log.d("Direccion:", d.direccion + " " + coord);
             }
             return direcciones;
-        }
-    }
-
-    public class Direccion {
-        String direccion;
-        String coordenadas;
-
-        public Direccion(String direccion, String coordenadas) {
-            this.direccion = direccion;
-            this.coordenadas = coordenadas;
-        }
-    }
-
-    public class Restaurant {
-        String nombre;
-        String direccion;
-        String icono;
-
-        public Restaurant(String nombre, String direccion, String icono) {
-            this.direccion = direccion;
-            this.nombre = nombre;
-            this.icono = icono;
-        }
-    }
-
-    public class RestaurantAdapter extends BaseAdapter {
-
-        ArrayList<Restaurant> restaurants;
-        Context context;
-
-        public RestaurantAdapter(Context context, ArrayList<Restaurant> restaurants) {
-            this.context = context;
-            this.restaurants = restaurants;
-        }
-
-        @Override
-        public int getCount() {
-            return restaurants.size();
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return restaurants.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int position, View view, ViewGroup viewGroup) {
-
-            if (view == null) {
-                LayoutInflater inflater = (LayoutInflater) context
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = inflater.inflate(R.layout.list_item, viewGroup, false);
-            }
-
-            TextView nombreTV = (TextView) view.findViewById(R.id.nombre);
-            TextView direccionTV = (TextView) view.findViewById(R.id.direc);
-
-            Restaurant p = this.restaurants.get(position);
-            nombreTV.setText(p.nombre);
-            direccionTV.setText(p.direccion);
-            return view;
         }
     }
     public static boolean isNumeric(String str)

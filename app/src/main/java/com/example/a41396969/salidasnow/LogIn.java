@@ -5,18 +5,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-public class ActividadInicio extends AppCompatActivity {
+public class LogIn extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.actividad_inicio);
+        setContentView(R.layout.log_in);
     }
 
-    public void Click_Prueba(View vista)
-    {
+    public void Click_Prueba(View vista) {
         Intent ActividadDestino;
-        ActividadDestino = new Intent(ActividadInicio.this, ActividadLugaresCercanos.class);
+        ActividadDestino = new Intent(LogIn.this, ActividadLugaresCercanos.class);
         startActivity(ActividadDestino);
     }
 }

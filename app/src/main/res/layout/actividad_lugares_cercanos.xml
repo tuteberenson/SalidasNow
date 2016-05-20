@@ -10,18 +10,18 @@
     android:orientation="vertical"
     tools:context="ar.edu.ort.geolocation.MainActivity"
     android:background="@drawable/fondoopaco"
-  >
+    >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-    <EditText
-        android:id="@+id/direccion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="Direccion"
+        <EditText
+            android:id="@+id/direccion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Direccion"
 
-        />
+            />
         <EditText
             android:id="@+id/numDirec"
             android:layout_width="wrap_content"
@@ -62,4 +62,3 @@
          />-->
 
 </LinearLayout>
-
