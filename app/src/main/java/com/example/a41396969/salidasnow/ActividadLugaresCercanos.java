@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,23 +26,39 @@ import java.util.ArrayList;
 
 public class ActividadLugaresCercanos extends AppCompatActivity {
 
-    EditText direccion;
+    EditText direccion, numDireccion;
     TextView dirEncontrada, nombreRes;
     ListView listVW;
+    ArrayAdapter<String> Adaptador;
+    Spinner SPNListaDeDirecciones;
+    ArrayList<String> arrayStrDirecciones=null;
+    ArrayList<Direccion> direcciones;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.actividad_lugares_cercanos);
-        listVW = (ListView) findViewById(R.id.listVw);
-        direccion = (EditText) findViewById(R.id.direccion);
+        listVW = (ListView)findViewById(R.id.listVw);
+        direccion = (EditText)findViewById(R.id.direccion);
+        SPNListaDeDirecciones =(Spinner)findViewById(R.id.SpnDirecciones);
+        Adaptador = new ArrayAdapter<String>(ActividadLugaresCercanos.this, android.R.layout.simple_spinner_item,  arrayStrDirecciones);
+        Adaptador.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        SPNListaDeDirecciones.setAdapter(Adaptador);
 
+        SPNListaDeDirecciones.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               coordenadas = direcciones.get(position).coordenadas;
+
+            }
+        });
         /*dirEncontrada = (TextView) findViewById(R.id.dirEncontrada);
         nombreRes = (TextView) findViewById(R.id.Nombre);*/
     }
     public void consultarRestaurantes(View v) {
         String url = "https://maps.googleapis.com/maps/api/geocode/json?address=";
         Toast MToast;
+
         if (!direccion.getText().toString().isEmpty()) {
             if (isNumeric(direccion.getText().toString())) {
                 MToast = Toast.makeText(this, "No ingrese solo numeros en la direccion", Toast.LENGTH_SHORT);
@@ -64,16 +82,16 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
     // String - la url que recibe doInBackground
     // Void -  Progreso (no se usa)
     // ArrayList<Direccion> - lo que devuelve doInBackground
-    private class GeolocalizacionTask extends AsyncTask<String, Void, ArrayList<Restaurant>> {
+    private class GeolocalizacionTask extends AsyncTask<String, Void,Boolean> {
         private OkHttpClient client = new OkHttpClient();
 
         @Override
-        protected void onPostExecute(final ArrayList<Restaurant> Lrestaurants) {
-            super.onPostExecute(Lrestaurants);
-            if (!Lrestaurants.isEmpty()) {
-                /*
+        protected void onPostExecute(Boolean resultado) {
+            super.onPostExecute(resultado);
+          /* if (!Lrestaurants.isEmpty()) {
+
                 requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-                listVW.setContentView(R.layout.main);*/
+                listVW.setContentView(R.layout.main);
 
                 listVW.setAdapter(new RestaurantAdapter(ActividadLugaresCercanos.this, Lrestaurants));
                 //  nombreRes.setText("Nombre: "+Lrestaurants.get(0).nombre);
@@ -88,11 +106,11 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
                         Log.d("Test", "02");
                     }
                 });
-            }
+            }*/
         }
 
         @Override
-        protected ArrayList<Restaurant> doInBackground(String... params) {
+        protected Boolean doInBackground(String... params) {
             String url = params[0];
 
             Request request = new Request.Builder()
@@ -100,52 +118,22 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
                     .build();
             try {
                 Response response = client.newCall(request).execute();  // Llamado al Google API
-                ArrayList<Direccion> direcciones = parsearResultado(response.body().string());      // Convierto el resultado en ArrayList<Direccion>
-                String coordenadas = direcciones.get(0).coordenadas;
-                String url2 = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants";
-                url2 += "&location=" + coordenadas;
-                url2 += "&radius=200";
-                url2 += "&key=AIzaSyA0T6Xd7zuyregCBfyon2axZWcgs1CUq-A";
+              direcciones = parsearResultado(response.body().string());      // Convierto el resultado en ArrayList<Direccion>
 
-                Request request2 = new Request.Builder()
-                        .url(url2)
-                        .build();
-                Response response2 = client.newCall(request2).execute();
-                ArrayList<Restaurant> restaurants = parsearResultado2(response2.body().string());      // Convierto el resultado en ArrayList<Direccion>
+                arrayStrDirecciones.clear();
+                arrayStrDirecciones.addAll(ArrarDirecAstrYSpn(direcciones));
+                Adaptador.notifyDataSetChanged();
 
-                return restaurants;
+
+                return true;
 
             } catch (IOException | JSONException e) {
                 Log.d("Error", e.getMessage());                          // Error de Network o al parsear JSON
-                return new ArrayList<Restaurant>();
+                return false;
             }
         }
 
-        private ArrayList<Restaurant> parsearResultado2(String JSONstr) throws JSONException {
-            ArrayList<Restaurant> restaurants = new ArrayList<>();
-            JSONObject json = new JSONObject(JSONstr);                 // Convierto el String recibido a JSONObject
-            JSONArray jsonDirecciones = json.getJSONArray("results");  // Array - una busqueda puede retornar varios resultados
-            for (int i = 0; i < jsonDirecciones.length(); i++) {
-                // Recorro los resultados recibidos
-                JSONObject jsonResultado = jsonDirecciones.getJSONObject(i);
-                String jsonAddress = jsonResultado.getString("formatted_address");  // Obtiene la direccion formateada
 
-                String jsonNom = jsonResultado.getString("name");                     // Obtiene latitud
-                String jsonIcono = jsonResultado.getString("icon");
-             /*  JSONObject jsonGeometry = jsonResultado.getJSONObject("geometry");
-                JSONObject jsonLocation = jsonGeometry.getJSONObject("location");
-                                    // Obtiene longitud
-                String coord = jsonLat + "," + jsonLng;
-
-                                 // Creo nueva instancia de direccion
-                                                   // Agrego objeto d al array list
-                Log.d("Direccion:",d.direccion + " " + coord);*/
-                Restaurant d = new Restaurant(jsonNom, jsonAddress, jsonIcono);
-                restaurants.add(d);
-                Log.d("Direccion:", d.direccion + " " + d.nombre);
-            }
-            return restaurants;
-        }
 
 
         // Convierte un JSON en un ArrayList de Direccion
@@ -171,7 +159,82 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
             return direcciones;
         }
     }
-    public static boolean isNumeric(String str)
+    private class PlacesTask extends AsyncTask<String, Void, ArrayList<Restaurant>> {
+        private OkHttpClient client = new OkHttpClient();
+
+        @Override
+        protected ArrayList<Restaurant> doInBackground(String... params) {
+            try {
+
+            String url2 = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants";
+            url2 += "&location=" + coordenadas;
+            url2 += "&radius=200";
+            url2 += "&key=AIzaSyA0T6Xd7zuyregCBfyon2axZWcgs1CUq-A";
+
+            Request request2 = new Request.Builder()
+                    .url(url2)
+                    .build();
+            Response response2 = client.newCall(request2).execute();
+            ArrayList<Restaurant> restaurants = parsearResultado2(response2.body().string());      // Convierto el resultado en ArrayList<Direccion>
+                return restaurants;
+
+            } catch (IOException | JSONException e) {
+                Log.d("Error", e.getMessage());                          // Error de Network o al parsear JSON
+                return new ArrayList<Restaurant>();
+            }
+        }
+        private ArrayList<Restaurant> parsearResultado2(String JSONstr) throws JSONException {
+            ArrayList<Restaurant> restaurants = new ArrayList<>();
+            JSONObject json = new JSONObject(JSONstr);                 // Convierto el String recibido a JSONObject
+            JSONArray jsonDirecciones = json.getJSONArray("results");  // Array - una busqueda puede retornar varios resultados
+            for (int i = 0; i < jsonDirecciones.length(); i++) {
+                // Recorro los resultados recibidos
+                JSONObject jsonResultado = jsonDirecciones.getJSONObject(i);
+                String jsonAddress = jsonResultado.getString("formatted_address");  // Obtiene la direccion formateada
+
+                String jsonNom = jsonResultado.getString("name");                     // Obtiene latitud
+                String jsonIcono = jsonResultado.getString("icon");
+             /*  JSONObject jsonGeometry = jsonResultado.getJSONObject("geometry");
+                JSONObject jsonLocation = jsonGeometry.getJSONObject("location");
+                                    // Obtiene longitud
+                String coord = jsonLat + "," + jsonLng;
+
+                                 // Creo nueva instancia de direccion
+                                                   // Agrego objeto d al array list
+                Log.d("Direccion:",d.direccion + " " + coord);*/
+                Restaurant d = new Restaurant(jsonNom, jsonAddress, jsonIcono);
+                restaurants.add(d);
+                Log.d("Restaurants:", d.direccion + " " + d.nombre);
+            }
+            return restaurants;
+        }
+        @Override
+        protected void onPostExecute(final ArrayList<Restaurant> Lrestaurants) {
+            super.onPostExecute(Lrestaurants);
+            if (!Lrestaurants.isEmpty()) {
+                /*
+                requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+                listVW.setContentView(R.layout.main);*/
+
+                listVW.setAdapter(new RestaurantAdapter(ActividadLugaresCercanos.this, Lrestaurants));
+                //  nombreRes.setText("Nombre: "+Lrestaurants.get(0).nombre);
+                //  dirEncontrada.setText("Direccion: "+Lrestaurants.get(0).direccion);    // Muestro en pantalla la primera direccion recibida
+                listVW.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Log.d("Test", "00");
+                        //String item = ((TextView)view).getText().toString();
+                        Log.d("Test",Lrestaurants.get(position)+"");
+                        Toast.makeText(getBaseContext(), Lrestaurants.get(position).nombre +"", Toast.LENGTH_LONG).show();
+                        Log.d("Test", "02");
+                    }
+                });
+            }
+        }
+
+    }
+
+        public static boolean isNumeric(String str)
     {
         for (char c : str.toCharArray())
         {
@@ -179,4 +242,16 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
         }
         return true;
     }
+    public ArrayList<String> ArrarDirecAstrYSpn(ArrayList<Direccion> adresses)
+    {
+        ArrayList<String> DireccionesStr =new ArrayList<>();
+        for (Direccion d : adresses)
+        {
+            DireccionesStr.add(d.direccion+ ""+ d.coordenadas);
+        }
+        return DireccionesStr;
+
+
+    }
+
 }
