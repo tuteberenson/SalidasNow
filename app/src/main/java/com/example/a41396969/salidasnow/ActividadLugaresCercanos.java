@@ -1,5 +1,6 @@
 package com.example.a41396969.salidasnow;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -200,8 +201,6 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
                     .build();
             Response response2 = client.newCall(request2).execute();
 
-
-
                 ArrayList<Restaurant> restaurants = parsearResultado2(response2.body().string());      // Convierto el resultado en ArrayList<Direccion>
                 return restaurants;
 
@@ -249,11 +248,17 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
                 listVW.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Restaurant unResto =Lrestaurants.get(position);
                         Log.d("Test", "00");
                         //String item = ((TextView)view).getText().toString();
-                        Log.d("Test",Lrestaurants.get(position)+"");
-                        Toast.makeText(getBaseContext(), Lrestaurants.get(position).nombre +"", Toast.LENGTH_LONG).show();
+                        Log.d("Test", Lrestaurants.get(position) + "");
+                        Toast.makeText(getBaseContext(), unResto.nombre +"", Toast.LENGTH_LONG).show();
                         Log.d("Test", "02");
+
+
+                        Intent actividad = new Intent(ActividadLugaresCercanos.this, ActividadMapa.class);
+                        actividad.putExtra("Restaurant", unResto);
+                        startActivity(actividad);
                     }
                 });
             }
