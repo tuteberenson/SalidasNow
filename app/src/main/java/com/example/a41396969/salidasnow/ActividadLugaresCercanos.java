@@ -2,6 +2,7 @@ package com.example.a41396969.salidasnow;
 
 import android.content.Context;
 import android.content.Intent;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -36,7 +38,9 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
     ArrayAdapter<String> Adaptador;
     Spinner SPNListaDeDirecciones;
     ArrayList<String> arrayStrDirecciones;
+    ArrayList<String> direcRestaurants;
     ArrayList<Direccion> direcciones;
+    Button btnMostrarEnMapa;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,43 +52,53 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
         SPNListaDeDirecciones =(Spinner)findViewById(R.id.SpnDirecciones);
         Adaptador = new ArrayAdapter<String>(ActividadLugaresCercanos.this, android.R.layout.simple_spinner_item,  arrayStrDirecciones);
         Adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        btnMostrarEnMapa=(Button)findViewById(R.id.btn_MostrarEnMapa);
 
+        direcRestaurants=new ArrayList<>();
         SPNListaDeDirecciones.setAdapter(Adaptador);
         Log.d("LLega", "00");
 
 
 
     }
-    public void consultarRestaurantes(View v) {
+    public void BotonGralLugCercanos(View v) {
 
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(direccion.getWindowToken(), 0);
 
-        String url = "https://maps.googleapis.com/maps/api/geocode/json?address=";
-        Toast MToast;
+        if (v==findViewById(R.id.angry_btn)) {
+            String url = "https://maps.googleapis.com/maps/api/geocode/json?address="; //url  de API direcciones
+            Toast MToast;
 
-        arrayStrDirecciones.clear();
-        Adaptador.notifyDataSetChanged();
+            arrayStrDirecciones.clear();
+            Adaptador.notifyDataSetChanged();
 
-        if (!direccion.getText().toString().isEmpty()) {
+            if (!direccion.getText().toString().isEmpty()) {
 
-            if (isNumeric(direccion.getText().toString())) {
-                MToast = Toast.makeText(this, "No ingrese solo numeros en la direccion", Toast.LENGTH_SHORT);
+                if (isNumeric(direccion.getText().toString())) {
+                    MToast = Toast.makeText(this, "No ingrese solo numeros en la direccion", Toast.LENGTH_SHORT);
+                    MToast.show();
+                } else if (!verSiHayNums(direccion.getText().toString())) {
+                    Toast.makeText(ActividadLugaresCercanos.this, "Ingrese numeros en la direccion", Toast.LENGTH_SHORT).show();
+                } else {
+                    url += direccion.getText().toString();  // Copio la direccion ingresada al final de la URL
+                    url += "&components=country:AR&key=AIzaSyA0T6Xd7zuyregCBfyon2axZWcgs1CUq-A";
+                    new GeolocalizacionTask().execute(url);  // Llamo a clase async con url
+                }
+            } else if (direccion.getText().toString().isEmpty()) {
+
+                MToast = Toast.makeText(this, "Complete los campos", Toast.LENGTH_SHORT);
                 MToast.show();
-            }else if(!verSiHayNums(direccion.getText().toString()))
-            {
-                Toast.makeText(ActividadLugaresCercanos.this, "Ingrese numeros en la direccion", Toast.LENGTH_SHORT).show();
+                listVW.setAdapter(null);
             }
-            else {
-                url += direccion.getText().toString() ;  // Copio la direccion ingresada al final de la URL
-                url += "&components=country:AR&key=AIzaSyA0T6Xd7zuyregCBfyon2axZWcgs1CUq-A";
-                new GeolocalizacionTask().execute(url);  // Llamo a clase async con url
-            }
-        } else if(direccion.getText().toString().isEmpty()){
+        }
+        if (v==findViewById(R.id.btn_MostrarEnMapa))
+        {
+            ArrayList<String> direccsAmapa= direcRestaurants;
+            Intent actividad = new Intent(ActividadLugaresCercanos.this, ActividadMapa.class);
 
-            MToast = Toast.makeText(this, "Complete los campos", Toast.LENGTH_SHORT);
-            MToast.show();
-            listVW.setAdapter(null);
+            actividad.putStringArrayListExtra("Direcciones", direccsAmapa);
+            startActivity(actividad);
         }
     }
 
@@ -110,6 +124,7 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
                     arrayStrDirecciones.addAll(ArrarDirecAstrYSpn(resultado));
                     Adaptador.notifyDataSetChanged();
 
+
                     SPNListaDeDirecciones.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
                         @Override
@@ -119,7 +134,7 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
                             Log.d("parametrosOITS", "" + arg0 + "" + arg1 + "" + posicion + "" + arg3);
                             new PlacesTask().execute(direcciones.get(posicion).coordenadas);
                             Log.d("OITS", direcciones.get(posicion).coordenadas);
-
+                            btnMostrarEnMapa.setVisibility(View.VISIBLE);
                        /* String items = SPNListaDeDirecciones.getSelectedItem().toString();
                         Log.i("Selected item : ", items);*/
                         }
@@ -188,16 +203,16 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
         protected ArrayList<Restaurant> doInBackground(String... params) {
             try {
 
-            String url2 = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants";
-                Log.d("Coordenadas-dibRest",""+params[0]);
-            url2 += "&location="+ params[0];
-            url2 += "&radius=75";
-            url2 += "&key=AIzaSyA0T6Xd7zuyregCBfyon2axZWcgs1CUq-A";
-             Log.d("url 2",url2);
-            Request request2 = new Request.Builder()
-                    .url(url2)
-                    .build();
-            Response response2 = client.newCall(request2).execute();
+                String url2 = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=restaurants";
+                Log.d("Coordenadas-dibRest", "" + params[0]);
+                url2 += "&location=" + params[0];
+                url2 += "&radius=75";
+                url2 += "&key=AIzaSyA0T6Xd7zuyregCBfyon2axZWcgs1CUq-A";
+                Log.d("url 2", url2);
+                Request request2 = new Request.Builder()
+                        .url(url2)
+                        .build();
+                Response response2 = client.newCall(request2).execute();
 
                 ArrayList<Restaurant> restaurants = parsearResultado2(response2.body().string());      // Convierto el resultado en ArrayList<Direccion>
                 return restaurants;
@@ -207,6 +222,7 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
                 return new ArrayList<Restaurant>();
             }
         }
+
         private ArrayList<Restaurant> parsearResultado2(String JSONstr) throws JSONException {
             ArrayList<Restaurant> restaurants = new ArrayList<>();
             JSONObject json = new JSONObject(JSONstr);                 // Convierto el String recibido a JSONObject
@@ -232,14 +248,19 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
             }
             return restaurants;
         }
+
         @Override
         protected void onPostExecute(final ArrayList<Restaurant> Lrestaurants) {
             super.onPostExecute(Lrestaurants);
             if (!Lrestaurants.isEmpty()) {
+
+                for (Restaurant r:Lrestaurants) {
+                    direcRestaurants.add(r.direccion);
+                }
                 /*
                 requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
                 listVW.setContentView(R.layout.main);*/
-                 final Intent actividad = new Intent(ActividadLugaresCercanos.this, ActividadMapa.class);
+                final Intent actividad = new Intent(ActividadLugaresCercanos.this, ActividadMapa.class);
 
                 listVW.setAdapter(new RestaurantAdapter(ActividadLugaresCercanos.this, Lrestaurants));
                 //  nombreRes.setText("Nombre: "+Lrestaurants.get(0).nombre);
@@ -247,11 +268,11 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
                 listVW.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Restaurant unResto =Lrestaurants.get(position);
+                        Restaurant unResto = Lrestaurants.get(position);
                         Log.d("Test", "00");
                         //String item = ((TextView)view).getText().toString();
                         Log.d("Test", Lrestaurants.get(position) + "");
-                        Toast.makeText(getBaseContext(), unResto.nombre +"", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext(), unResto.nombre + "", Toast.LENGTH_LONG).show();
                         Log.d("Test", "02");
 
                         actividad.putExtra("Restaurant", unResto);

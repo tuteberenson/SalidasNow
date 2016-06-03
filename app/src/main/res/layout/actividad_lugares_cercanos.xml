@@ -20,6 +20,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Direccion"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="15dp"
+            android:textSize="25sp"
+            android:layout_centerVertical="true"
+            android:ellipsize="start"
+            android:gravity="center"
+            android:background="@drawable/edit_text_style"
             />
         <!-- <EditText
              android:id="@+id/numDirec"
@@ -31,11 +40,22 @@
              />*//>-->
      </LinearLayout>
      <Button
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:onClick="consultarRestaurantes"
+
+         android:onClick="BotonGralLugCercanos"
          android:text="Consultar Restaurantes"
-         android:layout_gravity="center"/>
+         android:layout_gravity="center"
+         android:id="@+id/angry_btn"
+
+         android:textColor="#FFFFFF"
+         android:textSize="15sp"
+
+         android:layout_width="250dp"
+         android:layout_height="60dp"
+         android:background="@drawable/buttonshape"
+         android:shadowColor="#0A05A8"
+         android:shadowDx="0"
+         android:shadowDy="0"
+         android:shadowRadius="0"/>
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,11 +74,29 @@
          />-->
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="300dp"
         android:id="@+id/listVw"
         >
 
     </ListView>
+    <Button
+
+        android:onClick="BotonGralLugCercanos"
+        android:text="Mostrar en mapa"
+        android:layout_gravity="center"
+        android:id="@+id/btn_MostrarEnMapa"
+
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+
+        android:layout_width="250dp"
+        android:layout_height="60dp"
+        android:background="@drawable/buttonshape"
+        android:shadowColor="#0A05A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="0"
+        android:visibility="invisible"/>
     <!-- <ImageView
          android:layout_width="50dp"
          android:layout_height="50dp"

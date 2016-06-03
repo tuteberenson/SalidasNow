@@ -34,6 +34,7 @@ public class ActividadMapa extends AppCompatActivity  implements OnMapReadyCallb
 
     GoogleMap googleMap;
     ArrayList<Direccion> coordenadasRestaurant;
+    ArrayList<String> arrayDirecc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,14 +46,28 @@ public class ActividadMapa extends AppCompatActivity  implements OnMapReadyCallb
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         Intent ActividadRecibida = getIntent();
+        arrayDirecc=new ArrayList<>();
 
-        Restaurant RestoSerialised = (Restaurant)ActividadRecibida.getSerializableExtra("Restaurant");
-
+        if (ActividadRecibida.getSerializableExtra("Restaurant")!=null) {
+            Restaurant RestoSerialised = (Restaurant) ActividadRecibida.getSerializableExtra("Restaurant");
+            String url = RestoSerialised.direccion;
+            Log.d("url",url);
+            new GeolocalizacionTask().execute(url);
+        }
+        else
+        {
+            arrayDirecc = ActividadRecibida.getStringArrayListExtra("Direcciones");
+            {
+                for (String d : arrayDirecc)
+                {
+                    new GeolocalizacionTask().execute(d);
+                }
+            }
+        }
         //String url = "https://maps.googleapis.com/maps/api/geocode/json?address=";
-        String url = RestoSerialised.direccion;  // Copio la direccion ingresada al final de la URL
+         // Copio la direccion ingresada al final de la URL
         //url += "&components=country:AR&key=AIzaSyA0T6Xd7zuyregCBfyon2axZWcgs1CUq-A";
-        Log.d("url",url);
-        new GeolocalizacionTask().execute(url);
+
         //Esto está mal hay que mandarle la lat y long del restaurant para eso hay que volver a mandar la direc del restaurant
         //Y que te devuelva las coordenadas en in para poner acá abajo--
         //Seguir tutorial de http://www.tutorialspoint.com/android/android_google_maps.htm
