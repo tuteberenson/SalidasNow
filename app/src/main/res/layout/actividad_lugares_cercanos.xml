@@ -17,7 +17,7 @@
         android:orientation="horizontal">
         <EditText
             android:id="@+id/direccion"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Direccion"
             />
@@ -34,7 +34,8 @@
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
          android:onClick="consultarRestaurantes"
-         android:text="Consultar Restaurantes"/>
+         android:text="Consultar Restaurantes"
+         android:layout_gravity="center"/>
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

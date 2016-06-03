@@ -48,9 +48,9 @@ public class ActividadMapa extends AppCompatActivity  implements OnMapReadyCallb
 
         Restaurant RestoSerialised = (Restaurant)ActividadRecibida.getSerializableExtra("Restaurant");
 
-        String url = "https://maps.googleapis.com/maps/api/geocode/json?address=";
-        url += sacarEspacios(RestoSerialised.direccion);  // Copio la direccion ingresada al final de la URL
-        url += "&components=country:AR&key=AIzaSyA0T6Xd7zuyregCBfyon2axZWcgs1CUq-A";
+        //String url = "https://maps.googleapis.com/maps/api/geocode/json?address=";
+        String url = RestoSerialised.direccion;  // Copio la direccion ingresada al final de la URL
+        //url += "&components=country:AR&key=AIzaSyA0T6Xd7zuyregCBfyon2axZWcgs1CUq-A";
         Log.d("url",url);
         new GeolocalizacionTask().execute(url);
         //Esto está mal hay que mandarle la lat y long del restaurant para eso hay que volver a mandar la direc del restaurant
@@ -71,7 +71,7 @@ public class ActividadMapa extends AppCompatActivity  implements OnMapReadyCallb
         @Override
         protected void onPostExecute(List<Address> direcciones) {
             super.onPostExecute(direcciones);
-
+                Log.d("Direcciones",direcciones+"");
             if (!direcciones.isEmpty()) {
                 // Muestro la primera direccion recibida
                 Address dirRecibida = direcciones.get(0);  // La primera direccion
@@ -112,7 +112,7 @@ public class ActividadMapa extends AppCompatActivity  implements OnMapReadyCallb
             Log.d("LLega DIB","00");
             List<Address> addresses = null;
             try {
-                Log.d("LLega DIB","01");
+                Log.d("LLega DIB",address+"");
                 // Utilizo la clase Geocoder para buscar la direccion. Limito a 10 resultados
                 addresses = geocoder.getFromLocationName(address, 1);
                 Log.d("LLega DIB","02");
@@ -120,7 +120,7 @@ public class ActividadMapa extends AppCompatActivity  implements OnMapReadyCallb
                 Log.d("LLega DIB","error");
                 e.printStackTrace();
             }
-            Log.d("LLega DIB","03");
+            Log.d("LLega DIB","");
             return addresses;
         }
     }
@@ -156,6 +156,7 @@ public class ActividadMapa extends AppCompatActivity  implements OnMapReadyCallb
                 i=palabra.length();
             }
         }
+        palabraNueva+="CABA";
         return palabraNueva;
     }
     public String tieneTilde(String letra)
