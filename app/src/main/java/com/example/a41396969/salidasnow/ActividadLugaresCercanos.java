@@ -54,11 +54,19 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
         String url = "https://maps.googleapis.com/maps/api/geocode/json?address=";
         Toast MToast;
 
+        arrayStrDirecciones.clear();
+        Adaptador.notifyDataSetChanged();
+
         if (!direccion.getText().toString().isEmpty()) {
+
             if (isNumeric(direccion.getText().toString())) {
                 MToast = Toast.makeText(this, "No ingrese solo numeros en la direccion", Toast.LENGTH_SHORT);
                 MToast.show();
-            }else {
+            }else if(!verSiHayNums(direccion.getText().toString()))
+            {
+                Toast.makeText(ActividadLugaresCercanos.this, "Ingrese numeros en la direccion", Toast.LENGTH_SHORT).show();
+            }
+            else {
                 url += direccion.getText().toString() ;  // Copio la direccion ingresada al final de la URL
                 url += "&components=country:AR&key=AIzaSyA0T6Xd7zuyregCBfyon2axZWcgs1CUq-A";
                 new GeolocalizacionTask().execute(url);  // Llamo a clase async con url
@@ -68,7 +76,6 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
             MToast = Toast.makeText(this, "Complete los campos", Toast.LENGTH_SHORT);
             MToast.show();
             listVW.setAdapter(null);
-
         }
     }
 
@@ -83,59 +90,41 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
         protected void onPostExecute(ArrayList<Direccion> resultado) {
             super.onPostExecute(resultado);
 
-            if (resultado != null) {
-                arrayStrDirecciones.clear();
-                arrayStrDirecciones.addAll(ArrarDirecAstrYSpn(resultado));
-                Adaptador.notifyDataSetChanged();
-
-                /* SPNListaDeDirecciones.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               new PlacesTask().execute(direcciones.get(position).coordenadas);
-
+            if ( Validacion(resultado.get(0).direccion))
+            {
+                Toast.makeText(ActividadLugaresCercanos.this, "Ingrese una direccion válida", Toast.LENGTH_SHORT).show();
             }
-        });*/
-                SPNListaDeDirecciones.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            else {
 
-                    @Override
-                    public void onItemSelected(AdapterView<?> arg0, View arg1, int posicion, long arg3) {
+                if (resultado != null) {
+                    arrayStrDirecciones.clear();
+                    arrayStrDirecciones.addAll(ArrarDirecAstrYSpn(resultado));
+                    Adaptador.notifyDataSetChanged();
+
+                    SPNListaDeDirecciones.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+                        @Override
+                        public void onItemSelected(AdapterView<?> arg0, View arg1, int posicion, long arg3) {
 
 
-                        Log.d("parametrosOITS", ""+arg0+""+arg1+""+posicion+""+arg3);
-                        new PlacesTask().execute(direcciones.get(posicion).coordenadas);
-                        Log.d("OITS",direcciones.get(posicion).coordenadas);
+                            Log.d("parametrosOITS", "" + arg0 + "" + arg1 + "" + posicion + "" + arg3);
+                            new PlacesTask().execute(direcciones.get(posicion).coordenadas);
+                            Log.d("OITS", direcciones.get(posicion).coordenadas);
 
                        /* String items = SPNListaDeDirecciones.getSelectedItem().toString();
                         Log.i("Selected item : ", items);*/
-                    }
+                        }
 
-                    @Override
-                    public void onNothingSelected(AdapterView<?> arg0) {
+                        @Override
+                        public void onNothingSelected(AdapterView<?> arg0) {
 
-                    }
+                        }
 
-                });
+                    });
 
-          /* if (!Lrestaurants.isEmpty()) {
-
-                requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-                listVW.setContentView(R.layout.main);
-
-                listVW.setAdapter(new RestaurantAdapter(ActividadLugaresCercanos.this, Lrestaurants));
-                //  nombreRes.setText("Nombre: "+Lrestaurants.get(0).nombre);
-                //  dirEncontrada.setText("Direccion: "+Lrestaurants.get(0).direccion);    // Muestro en pantalla la primera direccion recibida
-                listVW.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Log.d("Test", "00");
-                        //String item = ((TextView)view).getText().toString();
-                        Log.d("Test",Lrestaurants.get(position)+"");
-                        Toast.makeText(getBaseContext(), Lrestaurants.get(position).nombre +"", Toast.LENGTH_LONG).show();
-                        Log.d("Test", "02");
-                    }
-                });
-            }*/
+                }
             }
+
         }
         @Override
         protected ArrayList<Direccion> doInBackground(String... params) {
@@ -241,6 +230,7 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
                 /*
                 requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
                 listVW.setContentView(R.layout.main);*/
+                 final Intent actividad = new Intent(ActividadLugaresCercanos.this, ActividadMapa.class);
 
                 listVW.setAdapter(new RestaurantAdapter(ActividadLugaresCercanos.this, Lrestaurants));
                 //  nombreRes.setText("Nombre: "+Lrestaurants.get(0).nombre);
@@ -255,8 +245,6 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
                         Toast.makeText(getBaseContext(), unResto.nombre +"", Toast.LENGTH_LONG).show();
                         Log.d("Test", "02");
 
-
-                        Intent actividad = new Intent(ActividadLugaresCercanos.this, ActividadMapa.class);
                         actividad.putExtra("Restaurant", unResto);
                         startActivity(actividad);
                     }
@@ -282,8 +270,63 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
             DireccionesStr.add(d.direccion+ ""+ d.coordenadas);
         }
         return DireccionesStr;
+    }
+    public boolean Validacion(String direccion)
+    {
+        int varSubstring=0;
+        String palabraNueva="", caracter;
+        boolean esNumero, resul=false;
+        for (int i = 0; i < direccion.length(); i++)
+        {
 
+            if (varSubstring < direccion.length())
+            {
+                varSubstring=i+1;
+            }
+            caracter=direccion.substring(i,varSubstring);
 
+            esNumero=isNumeric(caracter);
+
+            if(caracter.compareTo(" ") != 0 && caracter.compareTo(".")!=0 && !esNumero && caracter.compareTo("-")!=0)
+            {
+                palabraNueva+=caracter;
+            }
+            if (esNumero || caracter.compareTo("-")==0)
+            {
+                i=direccion.length();
+            }
+        }
+        if (palabraNueva.compareTo("Argentina")==0)
+        {
+            resul=true;
+        }
+            return resul;
+    }
+    public boolean verSiHayNums(String ingresado)
+    {
+        int varSubstring=0;
+        String  caracter;
+        boolean esNumero, resul=false;
+        for (int i = 0; i < ingresado.length(); i++)
+        {
+
+            if (varSubstring < ingresado.length())
+            {
+                varSubstring=i+1;
+            }
+            caracter=ingresado.substring(i,varSubstring);
+
+            esNumero=isNumeric(caracter);
+
+         if (esNumero)
+         {
+             resul= true;
+             i=ingresado.length();
+
+         }
+
+        }
+        return resul;
     }
 
 }
