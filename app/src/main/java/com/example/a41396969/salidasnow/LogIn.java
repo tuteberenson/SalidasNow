@@ -15,7 +15,7 @@ public class LogIn extends AppCompatActivity {
 
     public void Click_Prueba(View vista) {
         Intent ActividadDestino;
-        ActividadDestino = new Intent(LogIn.this, ActividadLugaresCercanos.class);
+        ActividadDestino = new Intent(LogIn.this, ActividadPrincipal.class);
         startActivity(ActividadDestino);
     }
 }

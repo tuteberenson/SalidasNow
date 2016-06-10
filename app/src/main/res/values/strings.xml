@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">SalidasNow</string>
     <string name="title_activity_activity_mapa">Map</string>
+    <string name="title_activity_actividad_principal">ActividadPrincipal</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 </resources>

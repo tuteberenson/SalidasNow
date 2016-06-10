@@ -1,14 +1,15 @@
 package com.example.a41396969.salidasnow;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.opengl.Visibility;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,7 +31,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ActividadLugaresCercanos extends AppCompatActivity {
+public class FragmentLugaresCercanos extends Fragment {
 
     EditText direccion, numDireccion;
     TextView dirEncontrada, nombreRes;
@@ -43,30 +44,43 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
     Button btnMostrarEnMapa;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.actividad_lugares_cercanos);
-        listVW = (ListView)findViewById(R.id.listVw);
-        direccion = (EditText)findViewById(R.id.direccion);
         arrayStrDirecciones=new ArrayList<>();
-        SPNListaDeDirecciones =(Spinner)findViewById(R.id.SpnDirecciones);
-        Adaptador = new ArrayAdapter<String>(ActividadLugaresCercanos.this, android.R.layout.simple_spinner_item,  arrayStrDirecciones);
+        direcRestaurants=new ArrayList<>();
+
+        Log.d("LLega", "00");
+
+
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+       View vista =inflater.inflate(R.layout.actividad_lugares_cercanos,container,false);
+        listVW = (ListView) vista.findViewById(R.id.listVw);
+        direccion = (EditText) vista.findViewById(R.id.direccion);
+        arrayStrDirecciones=new ArrayList<>();
+        SPNListaDeDirecciones =(Spinner) vista.findViewById(R.id.SpnDirecciones);
+        Adaptador = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item,  arrayStrDirecciones);
         Adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        btnMostrarEnMapa=(Button)findViewById(R.id.btn_MostrarEnMapa);
+        btnMostrarEnMapa=(Button) vista.findViewById(R.id.btn_MostrarEnMapa);
 
         direcRestaurants=new ArrayList<>();
         SPNListaDeDirecciones.setAdapter(Adaptador);
         Log.d("LLega", "00");
 
 
-
+        return
+                super.onCreateView(inflater, container, savedInstanceState);
     }
+
     public void BotonGralLugCercanos(View v) {
 
-        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(direccion.getWindowToken(), 0);
 
-        if (v==findViewById(R.id.angry_btn)) {
+        if (v.getId() == R.id.angry_btn) {
             String url = "https://maps.googleapis.com/maps/api/geocode/json?address="; //url  de API direcciones
             Toast MToast;
 
@@ -76,10 +90,10 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
             if (!direccion.getText().toString().isEmpty()) {
 
                 if (isNumeric(direccion.getText().toString())) {
-                    MToast = Toast.makeText(this, "No ingrese solo numeros en la direccion", Toast.LENGTH_SHORT);
+                    MToast = Toast.makeText(getContext(), "No ingrese solo numeros en la direccion", Toast.LENGTH_SHORT);
                     MToast.show();
                 } else if (!verSiHayNums(direccion.getText().toString())) {
-                    Toast.makeText(ActividadLugaresCercanos.this, "Ingrese numeros en la direccion", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Ingrese numeros en la direccion", Toast.LENGTH_SHORT).show();
                 } else {
                     url += direccion.getText().toString();  // Copio la direccion ingresada al final de la URL
                     url += "&components=country:AR&key=AIzaSyA0T6Xd7zuyregCBfyon2axZWcgs1CUq-A";
@@ -87,15 +101,15 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
                 }
             } else if (direccion.getText().toString().isEmpty()) {
 
-                MToast = Toast.makeText(this, "Complete los campos", Toast.LENGTH_SHORT);
+                MToast = Toast.makeText(getContext(), "Complete los campos", Toast.LENGTH_SHORT);
                 MToast.show();
                 listVW.setAdapter(null);
             }
         }
-        if (v==findViewById(R.id.btn_MostrarEnMapa))
+        if (v.getId()==R.id.btn_MostrarEnMapa)
         {
             ArrayList<String> direccsAmapa= direcRestaurants;
-            Intent actividad = new Intent(ActividadLugaresCercanos.this, ActividadMapa.class);
+            Intent actividad = new Intent(getContext(), ActividadMapa.class);
 
             actividad.putStringArrayListExtra("Direcciones", direccsAmapa);
             startActivity(actividad);
@@ -115,7 +129,7 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
 
             if ( Validacion(resultado.get(0).direccion))
             {
-                Toast.makeText(ActividadLugaresCercanos.this, "Ingrese una direccion válida", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Ingrese una direccion válida", Toast.LENGTH_SHORT).show();
             }
             else {
 
@@ -260,9 +274,9 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
                 /*
                 requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
                 listVW.setContentView(R.layout.main);*/
-                final Intent actividad = new Intent(ActividadLugaresCercanos.this, ActividadMapa.class);
+                final Intent actividad = new Intent(getContext(), ActividadMapa.class);
 
-                listVW.setAdapter(new RestaurantAdapter(ActividadLugaresCercanos.this, Lrestaurants));
+                listVW.setAdapter(new RestaurantAdapter(getContext(), Lrestaurants));
                 //  nombreRes.setText("Nombre: "+Lrestaurants.get(0).nombre);
                 //  dirEncontrada.setText("Direccion: "+Lrestaurants.get(0).direccion);    // Muestro en pantalla la primera direccion recibida
                 listVW.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -272,7 +286,7 @@ public class ActividadLugaresCercanos extends AppCompatActivity {
                         Log.d("Test", "00");
                         //String item = ((TextView)view).getText().toString();
                         Log.d("Test", Lrestaurants.get(position) + "");
-                        Toast.makeText(getBaseContext(), unResto.nombre + "", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), unResto.nombre + "", Toast.LENGTH_LONG).show();
                         Log.d("Test", "02");
 
                         actividad.putExtra("Restaurant", unResto);
