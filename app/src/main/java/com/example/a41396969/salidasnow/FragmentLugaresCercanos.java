@@ -1,6 +1,7 @@
 package com.example.a41396969.salidasnow;
 
-import android.app.Fragment;
+import android.content.DialogInterface;
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -41,7 +42,11 @@ public class FragmentLugaresCercanos extends Fragment {
     ArrayList<String> arrayStrDirecciones;
     ArrayList<String> direcRestaurants;
     ArrayList<Direccion> direcciones;
-    Button btnMostrarEnMapa;
+    Button btnMostrarEnMapa,BotonConsultar;
+
+    public FragmentLugaresCercanos() {
+
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,6 +63,7 @@ public class FragmentLugaresCercanos extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
        View vista =inflater.inflate(R.layout.actividad_lugares_cercanos,container,false);
+
         listVW = (ListView) vista.findViewById(R.id.listVw);
         direccion = (EditText) vista.findViewById(R.id.direccion);
         arrayStrDirecciones=new ArrayList<>();
@@ -66,55 +72,63 @@ public class FragmentLugaresCercanos extends Fragment {
         Adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         btnMostrarEnMapa=(Button) vista.findViewById(R.id.btn_MostrarEnMapa);
 
+
+        BotonConsultar=(Button)vista.findViewById(R.id.angry_btn);
+        BotonConsultar.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(direccion.getWindowToken(), 0);
+
+                if (v.getId() == R.id.angry_btn) {
+                    String url = "https://maps.googleapis.com/maps/api/geocode/json?address="; //url  de API direcciones
+                    Toast MToast;
+
+                    arrayStrDirecciones.clear();
+                    Adaptador.notifyDataSetChanged();
+
+                    if (!direccion.getText().toString().isEmpty()) {
+
+                        if (isNumeric(direccion.getText().toString())) {
+                            MToast = Toast.makeText(getContext(), "No ingrese solo numeros en la direccion", Toast.LENGTH_SHORT);
+                            MToast.show();
+                        } else if (!verSiHayNums(direccion.getText().toString())) {
+                            Toast.makeText(getContext(), "Ingrese numeros en la direccion", Toast.LENGTH_SHORT).show();
+                        } else {
+                            url += direccion.getText().toString();  // Copio la direccion ingresada al final de la URL
+                            url += "&components=country:AR&key=AIzaSyA0T6Xd7zuyregCBfyon2axZWcgs1CUq-A";
+                            new GeolocalizacionTask().execute(url);  // Llamo a clase async con url
+                        }
+                    } else if (direccion.getText().toString().isEmpty()) {
+
+                        MToast = Toast.makeText(getContext(), "Complete los campos", Toast.LENGTH_SHORT);
+                        MToast.show();
+                        listVW.setAdapter(null);
+                    }
+                }
+                if (v.getId() == R.id.btn_MostrarEnMapa) {
+                    ArrayList<String> direccsAmapa = direcRestaurants;
+                    Intent actividad = new Intent(getContext(), ActividadMapa.class);
+
+                    actividad.putStringArrayListExtra("Direcciones", direccsAmapa);
+                    startActivity(actividad);
+                }
+            }
+        });
+
+
         direcRestaurants=new ArrayList<>();
         SPNListaDeDirecciones.setAdapter(Adaptador);
         Log.d("LLega", "00");
 
 
-        return
-                super.onCreateView(inflater, container, savedInstanceState);
+        return vista;
+               // super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    public void BotonGralLugCercanos(View v) {
 
-        InputMethodManager imm = (InputMethodManager)getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(direccion.getWindowToken(), 0);
-
-        if (v.getId() == R.id.angry_btn) {
-            String url = "https://maps.googleapis.com/maps/api/geocode/json?address="; //url  de API direcciones
-            Toast MToast;
-
-            arrayStrDirecciones.clear();
-            Adaptador.notifyDataSetChanged();
-
-            if (!direccion.getText().toString().isEmpty()) {
-
-                if (isNumeric(direccion.getText().toString())) {
-                    MToast = Toast.makeText(getContext(), "No ingrese solo numeros en la direccion", Toast.LENGTH_SHORT);
-                    MToast.show();
-                } else if (!verSiHayNums(direccion.getText().toString())) {
-                    Toast.makeText(getContext(), "Ingrese numeros en la direccion", Toast.LENGTH_SHORT).show();
-                } else {
-                    url += direccion.getText().toString();  // Copio la direccion ingresada al final de la URL
-                    url += "&components=country:AR&key=AIzaSyA0T6Xd7zuyregCBfyon2axZWcgs1CUq-A";
-                    new GeolocalizacionTask().execute(url);  // Llamo a clase async con url
-                }
-            } else if (direccion.getText().toString().isEmpty()) {
-
-                MToast = Toast.makeText(getContext(), "Complete los campos", Toast.LENGTH_SHORT);
-                MToast.show();
-                listVW.setAdapter(null);
-            }
-        }
-        if (v.getId()==R.id.btn_MostrarEnMapa)
-        {
-            ArrayList<String> direccsAmapa= direcRestaurants;
-            Intent actividad = new Intent(getContext(), ActividadMapa.class);
-
-            actividad.putStringArrayListExtra("Direcciones", direccsAmapa);
-            startActivity(actividad);
-        }
-    }
 
     // Se conecta a Google API geocode(JavaScript). No utiliza la clase android.location.Geocoder ya que requiere API KEY
     // Parametros

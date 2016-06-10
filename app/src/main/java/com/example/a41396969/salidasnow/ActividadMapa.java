@@ -113,7 +113,7 @@ public class ActividadMapa extends AppCompatActivity  implements OnMapReadyCallb
 
                     googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(lat, lng))
-                            .title(dirRecibida.getAddressLine(0)));  // Dibujo el marker
+                            .title(dirRecibida.getAddressLine(0)));// Dibujo el marker
                 }
             }
         }
@@ -128,7 +128,7 @@ public class ActividadMapa extends AppCompatActivity  implements OnMapReadyCallb
             List<Address> addresses = null;
             try {
                 Log.d("LLega DIB",address+"");
-                // Utilizo la clase Geocoder para buscar la direccion. Limito a 10 resultados
+                // Utilizo la clase Geocoder para buscar la direccion. Limito a 1 resultado
                 addresses = geocoder.getFromLocationName(address, 1);
                 Log.d("LLega DIB","02");
             } catch (IOException e) {
