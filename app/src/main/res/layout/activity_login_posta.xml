@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.a41396969.salidasnow.login_posta"
+    android:orientation="vertical"
+    android:background="@drawable/fondoopaco">
+   <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/salidas2"
+        android:id="@+id/imgSalidasNow"
+        />
+
+   <EditText
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:hint="Usuario"
+       android:id="@+id/usuario"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Contraseña"
+        android:id="@+id/contraseña"/>
+    <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="horizontal">
+    <ImageButton
+        android:id="@+id/login"
+        android:layout_width="170dp"
+        android:layout_height="100dp"
+        android:background="#00ffffff"
+        android:onClick="Click_Login"
+
+        android:scaleType="centerInside"
+        android:src="@drawable/login" />
+    <!--android:onClick="BotonLogin"-->
+    <ImageButton
+        android:id="@+id/BotonSignIn"
+        android:layout_width="170dp"
+        android:layout_height="100dp"
+        android:background="#00ffffff"
+        android:onClick="Click_singUP"
+
+        android:scaleType="centerInside"
+        android:src="@drawable/sign" />
+    <!--android:onClick="BotonSignIn"-->
+   </LinearLayout>
+</LinearLayout>
