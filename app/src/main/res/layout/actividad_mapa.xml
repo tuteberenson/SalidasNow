@@ -4,12 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.a41396969.salidasnow.ActividadMapa">
-
+<Button
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Volver"
+    android:id="@+id/btnVolver"/>
     <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.MapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout="@layout/log_in" />
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/log_in" />
+    </RelativeLayout>
 
-</RelativeLayout>
