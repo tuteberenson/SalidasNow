@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "21.0.2"
 
     defaultConfig {
         applicationId "com.example.a41396969.salidasnow"
@@ -26,4 +26,5 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.4.0'
     compile 'com.google.android.gms:play-services-maps:9.0.0'
     compile 'com.android.support:design:23.2.1'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }

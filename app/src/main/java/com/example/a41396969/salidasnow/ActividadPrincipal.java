@@ -23,6 +23,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 
 public class ActividadPrincipal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -61,8 +63,14 @@ public class ActividadPrincipal extends AppCompatActivity
         Usuarios usu=new Usuarios();
         txVwNombre=(TextView)navigationView.getHeaderView(0).findViewById(R.id.textViewSideBar1);
         txVwInfo=(TextView)navigationView.getHeaderView(0).findViewById(R.id.textViewSideBar2);
-        txVwNombre.setText(getIntent().getStringExtra("Username"));
-        txVwInfo.setText("Info 2");
+        imgVwIcono=(ImageView)navigationView.getHeaderView(0).findViewById(R.id.imageViewSideBar);
+
+        Picasso.with(getApplicationContext())
+                .load("http://salidasnow.hol.es/images/"+usu.get_NombreImg())
+                .fit()
+                .into(imgVwIcono);
+        txVwNombre.setText(usu.get_Nombre()+""+usu.get_Apellido());
+        txVwInfo.setText("Username: "+ usu.get_Username());
     }
 
     @Override
