@@ -2,6 +2,7 @@ package com.example.a41396969.salidasnow;
 
 //import android.support.v4.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -14,10 +15,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
@@ -34,6 +37,8 @@ public class ActividadPrincipal extends AppCompatActivity
         setContentView(R.layout.actividad_principal);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -53,9 +58,10 @@ public class ActividadPrincipal extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        Usuarios usu=new Usuarios();
         txVwNombre=(TextView)navigationView.getHeaderView(0).findViewById(R.id.textViewSideBar1);
         txVwInfo=(TextView)navigationView.getHeaderView(0).findViewById(R.id.textViewSideBar2);
-        txVwNombre.setText("Username");
+        txVwNombre.setText(getIntent().getStringExtra("Username"));
         txVwInfo.setText("Info 2");
     }
 
@@ -95,6 +101,8 @@ public class ActividadPrincipal extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+        ImageView imgView=(ImageView)findViewById(R.id.imgSDN);
+        imgView.setVisibility(View.INVISIBLE);
         int id = item.getItemId();
         Fragment fragment;
         if (id == R.id.nav_camera) {
@@ -119,6 +127,7 @@ public class ActividadPrincipal extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
     public void setUnRestaurant(Restaurant r)
     {
         restaurant =r;
