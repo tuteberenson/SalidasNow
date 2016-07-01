@@ -30,5 +30,12 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:src="@android:drawable/ic_dialog_map" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/salidas2"
+        android:scaleType="centerInside"
+        android:id="@+id/imgSDN"
+        android:visibility="visible"/>
 
 </android.support.design.widget.CoordinatorLayout>

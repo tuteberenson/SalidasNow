@@ -40,7 +40,6 @@
              />*//>-->
      </LinearLayout>
      <Button
-
          android:onClick="BotonGralLugCercanos"
          android:text="Consultar Restaurantes"
          android:layout_gravity="center"

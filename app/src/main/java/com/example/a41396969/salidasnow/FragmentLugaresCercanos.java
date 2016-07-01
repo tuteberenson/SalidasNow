@@ -1,7 +1,8 @@
 package com.example.a41396969.salidasnow;
 
 import android.content.DialogInterface;
-import android.support.v4.app.Fragment;
+//import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -73,7 +74,7 @@ public class FragmentLugaresCercanos extends Fragment {
         btnMostrarEnMapa=(Button) vista.findViewById(R.id.btn_MostrarEnMapa);
 
 
-        BotonConsultar=(Button)vista.findViewById(R.id.angry_btn);
+       BotonConsultar=(Button)vista.findViewById(R.id.angry_btn);
         BotonConsultar.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -108,6 +109,13 @@ public class FragmentLugaresCercanos extends Fragment {
                         listVW.setAdapter(null);
                     }
                 }
+
+            }
+        });
+        btnMostrarEnMapa=(Button)vista.findViewById(R.id.btn_MostrarEnMapa);
+        btnMostrarEnMapa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 if (v.getId() == R.id.btn_MostrarEnMapa) {
                     ArrayList<String> direccsAmapa = direcRestaurants;
                     Intent actividad = new Intent(getContext(), ActividadMapa.class);
@@ -117,6 +125,7 @@ public class FragmentLugaresCercanos extends Fragment {
                 }
             }
         });
+
 
 
         direcRestaurants=new ArrayList<>();
