@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="4dp"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp"
+    android:paddingTop="4dp"
     android:orientation="vertical"
     tools:context="ar.edu.ort.geolocation.MainActivity"
     android:background="@drawable/fondoopaco"
@@ -58,7 +58,9 @@
     <Spinner
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/SpnDirecciones">
+        android:id="@+id/SpnDirecciones"
+        android:background="@drawable/gradient_spinner"
+        android:layout_marginBottom="15px">
     </Spinner>
      <!--<TextView
          android:layout_marginTop="20dp"
@@ -74,8 +76,7 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="300dp"
-        android:id="@+id/listVw"
-        >
+        android:id="@+id/listVw"        >
 
     </ListView>
     <Button

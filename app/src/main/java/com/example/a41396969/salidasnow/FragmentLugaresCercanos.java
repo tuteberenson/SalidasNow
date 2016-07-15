@@ -104,6 +104,7 @@ public class FragmentLugaresCercanos extends Fragment {
                             url += direccion.getText().toString();  // Copio la direccion ingresada al final de la URL
                             url += "&components=country:AR&key=AIzaSyA0T6Xd7zuyregCBfyon2axZWcgs1CUq-A";
                             new GeolocalizacionTask().execute(url);  // Llamo a clase async con url
+                            direccion.setEnabled(false);
                         }
                     } else if (direccion.getText().toString().isEmpty()) {
 
@@ -123,8 +124,12 @@ public class FragmentLugaresCercanos extends Fragment {
                     ArrayList<String> direccsAmapa = direcRestaurants;
                     Intent actividad = new Intent(getContext(), ActividadMapa.class);
 
+                    direccion.setEnabled(true);
+
+                    actividad.putExtra("Direccion", direccion.getText().toString());
                     actividad.putStringArrayListExtra("Direcciones", direccsAmapa);
                     startActivity(actividad);
+
                 }
             }
         });
@@ -326,7 +331,9 @@ public class FragmentLugaresCercanos extends Fragment {
                         Log.d("Test", Lrestaurants.get(position) + "");
                         Toast.makeText(getContext(), unResto.nombre + "", Toast.LENGTH_LONG).show();
                         Log.d("Test", "02");
+                        direccion.setEnabled(false);
 
+                        actividad.putExtra("Direccion",direccion.getText().toString());
                         actividad.putExtra("Restaurant", unResto);
                         startActivity(actividad);
                     }

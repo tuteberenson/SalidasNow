@@ -8,6 +8,7 @@ import android.support.v4.app.NotificationCompatSideChannelService;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -35,17 +36,22 @@ public class ActividadMapa extends AppCompatActivity  implements OnMapReadyCallb
     GoogleMap googleMap;
     ArrayList<Direccion> coordenadasRestaurant;
     ArrayList<String> arrayDirecc;
+    TextView txDireccion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.actividad_mapa);
 
+        txDireccion = (TextView)findViewById(R.id.TextVwActivityMapa);
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
         Intent ActividadRecibida = getIntent();
+
+        txDireccion.setText(ActividadRecibida.getStringExtra("Direccion"));
         arrayDirecc=new ArrayList<>();
 
         if (ActividadRecibida.getSerializableExtra("Restaurant")!=null) {
@@ -145,7 +151,6 @@ public class ActividadMapa extends AppCompatActivity  implements OnMapReadyCallb
         this.googleMap = map;
         map.getUiSettings().setZoomControlsEnabled(false);
     }
-
 
     public String sacarEspacios(String palabra) {
 

@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.example.a41396969.salidasnow.ActividadMapa">
 <!--<Button
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="Volver"
     android:id="@+id/btnVolver" />-->
+    <android.support.v7.widget.AppCompatTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Direccion"
+        android:id="@+id/TextVwActivityMapa"
+        android:textSize="30dp"
+        android:textColor="#a40000"
+        android:gravity="center"
+        android:layout_marginTop="20px"
+        android:layout_marginBottom="20px"
+        />
     <fragment
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.MapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layout="@layout/log_in" />
-    </RelativeLayout>
+    </LinearLayout>
 
