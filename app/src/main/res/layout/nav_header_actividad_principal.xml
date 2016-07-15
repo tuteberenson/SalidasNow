@@ -13,8 +13,8 @@
 
     <ImageView
         android:id="@+id/imageViewSideBar"
-        android:layout_width="125px"
-        android:layout_height="125px"
+        android:layout_width="200px"
+        android:layout_height="200px"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         />
 
@@ -27,8 +27,7 @@
 
     <TextView
         android:id="@+id/textViewSideBar2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-         />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

@@ -1,9 +1,12 @@
 package com.example.a41396969.salidasnow;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+
 /**
  * Created by berenson on 30/06/2016.
  */
-public class Usuarios {
+public class Usuarios implements Serializable {
     private String _Username, _Nombre,_Apellido,_NombreImg, _Password;
     private int _idUsuario;
 
@@ -56,4 +59,5 @@ public class Usuarios {
     public void set_idUsuario(int _idUsuario) {
         this._idUsuario = _idUsuario;
     }
+
 }

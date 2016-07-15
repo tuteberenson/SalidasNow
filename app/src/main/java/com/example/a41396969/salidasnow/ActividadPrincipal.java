@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +26,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 
 public class ActividadPrincipal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -32,6 +35,7 @@ public class ActividadPrincipal extends AppCompatActivity
     TextView txVwNombre,txVwInfo;
     ImageView imgVwIcono;
     Restaurant restaurant;
+    ArrayList<Usuarios> UsuarioActual;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,12 @@ public class ActividadPrincipal extends AppCompatActivity
         setContentView(R.layout.actividad_principal);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Bundle paquete;
+        paquete=new Bundle();
+
+        UsuarioActual=new ArrayList<>();
+        paquete = getIntent().getExtras();
+        UsuarioActual = (ArrayList<Usuarios>)paquete.get("listaUsuario");
 
 
 
@@ -65,12 +75,13 @@ public class ActividadPrincipal extends AppCompatActivity
         txVwInfo=(TextView)navigationView.getHeaderView(0).findViewById(R.id.textViewSideBar2);
         imgVwIcono=(ImageView)navigationView.getHeaderView(0).findViewById(R.id.imageViewSideBar);
 
+
         Picasso.with(getApplicationContext())
-                .load("http://salidasnow.hol.es/images/"+usu.get_NombreImg())
+                .load("http://salidasnow.hol.es/images/"+UsuarioActual.get(0).get_NombreImg())
                 .fit()
                 .into(imgVwIcono);
-        txVwNombre.setText(usu.get_Nombre()+""+usu.get_Apellido());
-        txVwInfo.setText("Username: "+ usu.get_Username());
+        txVwNombre.setText(UsuarioActual.get(0).get_Nombre()+""+UsuarioActual.get(0).get_Apellido());
+        txVwInfo.setText("Username: " + UsuarioActual.get(0).get_Username());
     }
 
     @Override

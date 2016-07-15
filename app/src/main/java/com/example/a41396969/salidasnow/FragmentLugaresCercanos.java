@@ -1,5 +1,6 @@
 package com.example.a41396969.salidasnow;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 //import android.support.v4.app.Fragment;
 import android.app.Fragment;
@@ -45,6 +46,7 @@ public class FragmentLugaresCercanos extends Fragment {
     ArrayList<Direccion> direcciones;
     Button btnMostrarEnMapa,BotonConsultar;
 
+
     public FragmentLugaresCercanos() {
 
     }
@@ -63,13 +65,14 @@ public class FragmentLugaresCercanos extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-       View vista =inflater.inflate(R.layout.actividad_lugares_cercanos,container,false);
+       View vista =inflater.inflate(R.layout.actividad_lugares_cercanos, container, false);
 
+        Context context=getActivity();
         listVW = (ListView) vista.findViewById(R.id.listVw);
         direccion = (EditText) vista.findViewById(R.id.direccion);
         arrayStrDirecciones=new ArrayList<>();
         SPNListaDeDirecciones =(Spinner) vista.findViewById(R.id.SpnDirecciones);
-        Adaptador = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item,  arrayStrDirecciones);
+        Adaptador = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item,  arrayStrDirecciones);
         Adaptador.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         btnMostrarEnMapa=(Button) vista.findViewById(R.id.btn_MostrarEnMapa);
 
@@ -146,9 +149,21 @@ public class FragmentLugaresCercanos extends Fragment {
     // ArrayList<Direccion> - lo que devuelve doInBackground
     private class GeolocalizacionTask extends AsyncTask<String, Void, ArrayList<Direccion>> {
         private OkHttpClient client = new OkHttpClient();
+        private ProgressDialog dialog = new ProgressDialog(getContext());
+
+        @Override
+        protected void onPreExecute() {
+            this.dialog.setMessage("Please wait");
+            this.dialog.show();
+        }
+
         @Override
         protected void onPostExecute(ArrayList<Direccion> resultado) {
             super.onPostExecute(resultado);
+
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
 
             if ( Validacion(resultado.get(0).direccion))
             {

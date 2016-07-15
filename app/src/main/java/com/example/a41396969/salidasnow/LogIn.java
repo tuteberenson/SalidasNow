@@ -1,9 +1,11 @@
 package com.example.a41396969.salidasnow;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +27,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class LogIn extends AppCompatActivity {
+
 
     EditText edTxUsername, edTxPassword;
     String passwordIngresada, usernameIngresado;
@@ -49,12 +52,10 @@ public class LogIn extends AppCompatActivity {
 
         if (usernameIngresado.compareTo("") == 0) {
 
-            edTxUsername.setHintTextColor(recursos.getColor(R.color.Rojo));
-            edTxUsername.setHint("Ingrese usuario");
+            Toast.makeText(LogIn.this, "Ingrese usuario", Toast.LENGTH_SHORT).show();
         } else if (passwordIngresada.compareTo("") == 0)
         {
-            edTxPassword.setHintTextColor(recursos.getColor(R.color.Rojo));
-            edTxPassword.setHint("Ingrese contraseña");
+            Toast.makeText(LogIn.this, "Ingrese contraseña", Toast.LENGTH_SHORT).show();
         } else
         {
             String url = "http://salidasnow.hol.es/obtener_usuarios.php";
@@ -66,14 +67,21 @@ public class LogIn extends AppCompatActivity {
     }
     private class TraerUsuariosAsyncTask extends AsyncTask<String,Void,ArrayList<Usuarios>>
     {
+        private ProgressDialog dialog = new ProgressDialog(LogIn.this);
         private OkHttpClient client = new OkHttpClient();
+
+        @Override
+        protected void onPreExecute() {
+            this.dialog.setMessage("Please wait");
+            this.dialog.show();
+        }
         @Override
         protected void onPostExecute(ArrayList<Usuarios> resultado) {
             super.onPostExecute(resultado);
              UsuarioCorrecto =false;
             passInvalida=false;
 
-
+            dialog.dismiss();
             int comparadorUser, comparadorPass;
 
             if (resultado != null) {
@@ -85,10 +93,12 @@ public class LogIn extends AppCompatActivity {
 
                     if (comparadorUser== 0 && comparadorPass ==0)
                     {
-                        String url = "http://salidasnow.hol.es/http://salidasnow.hol.es/obtener_usuario_byId.php?idusuario="+unUsuario.get_idUsuario();
-                        new TraerUsuarioPorIdAsyncTask().execute(url);
                         UsuarioCorrecto =true;
+                        String url = "http://salidasnow.hol.es/obtener_usuario_byId.php?idusuario="+unUsuario.get_idUsuario();
+                        new TraerUsuarioPorIdAsyncTask().execute(url);
+
                         Log.d("Usuario","true");
+
                     }
                     else if (comparadorUser== 0 && comparadorPass !=0)
                     {
@@ -96,19 +106,10 @@ public class LogIn extends AppCompatActivity {
                     }
 
                 }
-                if (passInvalida)
-                {
+                if (passInvalida) {
                     Toast.makeText(getBaseContext(), "La password es incorrecta", Toast.LENGTH_SHORT).show();
                 }
-                else if (UsuarioCorrecto)
-                {
-                    Intent ActividadDestino;
-                    ActividadDestino = new Intent(LogIn.this, ActividadPrincipal.class);
-                    startActivity(ActividadDestino);
-                    edTxUsername.setText("");
-                    edTxPassword.setText("");
-                }
-                else
+                else if(!UsuarioCorrecto)
                 {
                     Toast.makeText(getBaseContext(), "El usuario no existe", Toast.LENGTH_SHORT).show();
                 }
@@ -151,7 +152,7 @@ public class LogIn extends AppCompatActivity {
                 String jsonNombreImg =jsonResultado.getString("NombreImg");
 
 
-                Log.d("parsearResultado","Usuario: "+ jsonUsuario+"Contraseña: "+jsonPassword);
+                Log.d("parsearResultado1","Usuario: "+ jsonUsuario+" Contraseña: "+jsonPassword);
                 Usuarios u = new Usuarios();
                 u.set_Nombre(jsonNombre);
                 u.set_Apellido(jsonApellido);
@@ -160,12 +161,12 @@ public class LogIn extends AppCompatActivity {
                 u.set_Username(jsonUsuario);
                 u.set_Password(jsonPassword);
 
-                u.get_Username();
+              /*  u.get_Username();
                 u.get_Password();
                 u.get_Apellido();
                 u.get_Nombre();
                 u.get_NombreImg();
-                u.get_idUsuario();
+                u.get_idUsuario();*/
                 usuariosArrayList.add(u);                                                 // Agrego objeto d al array list
             }
             return usuariosArrayList;
@@ -178,19 +179,29 @@ public class LogIn extends AppCompatActivity {
         protected void onPostExecute(ArrayList<Usuarios> resultado) {
             super.onPostExecute(resultado);
 
-
+            if (UsuarioCorrecto) {
+                Intent ActividadDestino;
+                ActividadDestino = new Intent(LogIn.this, ActividadPrincipal.class);
+                Log.d("ListaUsuario", listaUsuario.get(0).toString());
+                Bundle paquete = new Bundle();
+                paquete.putSerializable("listaUsuario", listaUsuario);
+                ActividadDestino.putExtras(paquete);
+                startActivity(ActividadDestino);
+                edTxUsername.setText("");
+                edTxPassword.setText("");
+            }
+/*
             if (resultado != null) {
 
                 Usuarios u=new Usuarios();
                 u.set_idUsuario((resultado.get(0).get_idUsuario()));//HAcerrr esto para los de abajo tambien yla lista la voy amanda r a lam otra activityy
-
-                resultado.get(0).set_Username(resultado.get(0).get_Username());
-                resultado.get(0).set_Nombre(resultado.get(0).get_Nombre());
-                resultado.get(0).set_Apellido(resultado.get(0).get_Apellido());
-                resultado.get(0).set_NombreImg(resultado.get(0).get_NombreImg());
-                resultado.get(0).set_Password(resultado.get(0).get_Password());
+                u.set_Username(resultado.get(0).get_Username());
+                u.set_Password(resultado.get(0).get_Password());
+                u.set_Apellido(resultado.get(0).get_Apellido());
+                u.set_Nombre(resultado.get(0).get_Nombre());
+                u.set_NombreImg(resultado.get(0).get_NombreImg());
                 listaUsuario.add(u);
-            }
+            }*/
 
         }
         @Override
@@ -203,24 +214,25 @@ public class LogIn extends AppCompatActivity {
                     .build();
             try {
                 Response response = client.newCall(request).execute();
-                arrayUsuarios  = parsearResultado(response.body().string());
+                arrayUsuarios  = parsearResultado2(response.body().string());
 
                 return arrayUsuarios;
 
             } catch (IOException | JSONException e) {
                 Log.d("Error", e.getMessage());                          // Error de Network o al parsear JSON
-                return null;
+                return arrayUsuarios;
             }
         }
 
 
-        ArrayList<Usuarios> parsearResultado(String JSONstr) throws JSONException {
+        ArrayList<Usuarios> parsearResultado2(String JSONstr) throws JSONException {
             ArrayList<Usuarios> usuariosArrayList = new ArrayList<>();
+
             JSONObject json = new JSONObject(JSONstr);                 // Convierto el String recibido a JSONObject
-            JSONArray jsonUsuarios = json.getJSONArray("usuario");  // Array - una busqueda puede retornar varios resultados
-            for (int i = 0; i < jsonUsuarios.length(); i++) {
-                // Recorro los resultados recibidos
-                JSONObject jsonResultado = jsonUsuarios.getJSONObject(i);
+            //JSONObject jsonUsuario = new JSONObject("usuario");  // Array - una busqueda puede retornar varios resultados
+
+
+                JSONObject jsonResultado = json.getJSONObject("usuario");
                 String jsonUsuario = jsonResultado.getString("Username");
                 String jsonPassword =jsonResultado.getString("Password");
                 String jsonNombre = jsonResultado.getString("Nombre");
@@ -229,7 +241,7 @@ public class LogIn extends AppCompatActivity {
                 String jsonNombreImg =jsonResultado.getString("NombreImg");
 
 
-                Log.d("parsearResultado","Usuario: "+ jsonUsuario+"Contraseña: "+jsonPassword);
+                Log.d("parsearResultado2", "Usuario: " + jsonUsuario + " Contraseña: " + jsonPassword);
                 Usuarios u = new Usuarios();
                 u.set_Nombre(jsonNombre);
                 u.set_Apellido(jsonApellido);
@@ -238,14 +250,15 @@ public class LogIn extends AppCompatActivity {
                 u.set_Username(jsonUsuario);
                 u.set_Password(jsonPassword);
 
-                u.get_Username();
+               /* u.get_Username();
                 u.get_Password();
                 u.get_Apellido();
                 u.get_Nombre();
                 u.get_NombreImg();
-                u.get_idUsuario();
+                u.get_idUsuario();*/
+
                 usuariosArrayList.add(u);                                                 // Agrego objeto d al array list
-            }
+                listaUsuario.add(u);
             return usuariosArrayList;
         }
     }
