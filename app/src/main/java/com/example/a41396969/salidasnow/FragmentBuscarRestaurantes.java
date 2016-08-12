@@ -22,6 +22,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -45,7 +46,7 @@ public class FragmentBuscarRestaurantes extends Fragment {
     ArrayAdapter<String> adaptereleccion;
     Button btnBuscar;
     ListView listVw;
-
+    RestaurantAdapterCompleto adaptadorRestos;
 
     public FragmentBuscarRestaurantes() {
         // Required empty public constructor
@@ -86,6 +87,8 @@ public class FragmentBuscarRestaurantes extends Fragment {
         arrayspneleccion.add("Buscar por nombre");
         arrayspneleccion.add("Buscar por calidad");
         arrayspneleccion.add("Buscar por precio");
+
+
 
         adaptercalidad = new ArrayAdapter<String>(getContext(), R.layout.spinner_item, arrayspncalidad);
         adapterprecio = new ArrayAdapter<String>(getContext(),  R.layout.spinner_item, arrayspnprecio);
@@ -141,6 +144,8 @@ public class FragmentBuscarRestaurantes extends Fragment {
                 Estrellas= spncalidad.getSelectedItem().toString();
                 Precio = spnprecio.getSelectedItem().toString();
                 NombreRestaurant= txtnombre.getText().toString().trim();
+
+                listVw.setAdapter(null);
 
 /*                if (nombrebuscado.compareTo("")==0 && spneleccion.getSelectedItemPosition() == 0)
                 {
@@ -231,39 +236,106 @@ public class FragmentBuscarRestaurantes extends Fragment {
             this.dialog.show();
         }
         @Override
-        protected void onPostExecute(ArrayList<Restaurant> resultado) {
-            super.onPostExecute(resultado);
+        protected void onPostExecute(final ArrayList<Restaurant> resultadoEstrellas) {
+            super.onPostExecute(resultadoEstrellas);
 
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
 
-            if(!resultado.isEmpty())
+            if(!resultadoEstrellas.isEmpty())
             {
-                listVw.setAdapter(new RestaurantAdapter(getContext(), resultado));
+                Log.d("resultadoRestos0E",resultadoEstrellas.get(0).getEstrellas()+"");
 
+
+                adaptadorRestos=new RestaurantAdapterCompleto(getContext(), resultadoEstrellas);
+                listVw.setAdapter(adaptadorRestos);
+
+                final Intent actividad = new Intent(getContext(), ActividadMapa.class);
+
+
+                //  nombreRes.setText("Nombre: "+Lrestaurants.get(0).nombre);
+                //  dirEncontrada.setText("Direccion: "+Lrestaurants.get(0).direccion);    // Muestro en pantalla la primera direccion recibida
+                listVw.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Restaurant unResto = resultadoEstrellas.get(position);
+                        Log.d("Test", "00");
+                        //String item = ((TextView)view).getText().toString();
+                        Log.d("Test", resultadoEstrellas.get(position) + "");
+                        Toast.makeText(getContext(), unResto.getNombre() + "", Toast.LENGTH_LONG).show();
+                        Log.d("Test", "02");
+
+
+                        actividad.putExtra("Direccion",unResto.getDireccion());
+                        actividad.putExtra("Restaurant", unResto);
+                        startActivity(actividad);
+                    }
+                });
+
+
+            }
+            else
+            {
+                Toast.makeText(getContext(), "No hay restaurantes con ese criterio", Toast.LENGTH_SHORT).show();
             }
         }
         @Override
         protected ArrayList<Restaurant> doInBackground(String... params) {
-            String url = params[0];
+            String urlEstrellas = params[0];
 
-            ArrayList<Restaurant> arrayRestaurantes=new ArrayList<>();
+            ArrayList<Restaurant> arrayRestaurantesEstrellas =new ArrayList<>();
             Request request = new Request.Builder()
-                    .url(url)
+                    .url(urlEstrellas)
                     .build();
             try {
                 Response response = client.newCall(request).execute();
-                arrayRestaurantes  = parsearResultadoRestos(response.body().string());
+                Log.d("response body",response.body().string());
+                arrayRestaurantesEstrellas  = parsearResultadoRestosEstrellas(response.body().string());
 
-                return arrayRestaurantes;
+                return arrayRestaurantesEstrellas;
 
             } catch (IOException | JSONException e) {
                 Log.d("Error", e.getMessage());                          // Error de Network o al parsear JSON
-                return arrayRestaurantes;
+                return arrayRestaurantesEstrellas;
             }
         }
 
+        ArrayList<Restaurant> parsearResultadoRestosEstrellas(String JSONstr) throws JSONException {
+            ArrayList<Restaurant> RestaurantArrayList = new ArrayList<>();
+
+            JSONObject json = new JSONObject(JSONstr);                 // Convierto el String recibido a JSONObject
+            //JSONObject jsonPrecio = new JSONObject("usuario");  // Array - una busqueda puede retornar varios resultados
+
+
+            JSONArray jsonRestaurantes = json.getJSONArray("restaurantes");
+
+            for (int i=0;i<jsonRestaurantes.length();i++) {
+
+                JSONObject jsonResultado = jsonRestaurantes.getJSONObject(i);
+
+                String jsonNombre = jsonResultado.getString("Nombre");
+                String jsonDireccion = jsonResultado.getString("Direccion");
+                int jsonPrecio = jsonResultado.getInt("Precio");
+                int jsonEstrellas = jsonResultado.getInt("Estrellas");
+                int jsonNumeroTel = jsonResultado.getInt("NumeroTelefono");
+
+
+                Log.d("parsearResulRes", "Nombre: " + jsonNombre + " Direccion: " + jsonDireccion);
+                Restaurant re = new Restaurant();
+                re.setPrecio(jsonPrecio);
+                re.setNombre(jsonNombre);
+                re.setNumeroTelefono(jsonNumeroTel);
+
+                re.setEstrellas(jsonEstrellas);
+                re.setDireccion(jsonDireccion);
+
+
+                RestaurantArrayList.add(re);                                                 // Agrego objeto d al array list
+                Log.d("RestaurantArrayList", "Precio:" +RestaurantArrayList.get(0).getPrecio());
+            }
+            return RestaurantArrayList;
+        }
     }
     private class TraerRestaurantPorPrecio extends AsyncTask<String,Void,ArrayList<Restaurant>>
     {
@@ -277,30 +349,53 @@ public class FragmentBuscarRestaurantes extends Fragment {
             this.dialog.show();
         }
         @Override
-        protected void onPostExecute(ArrayList<Restaurant> resultado) {
-            super.onPostExecute(resultado);
+        protected void onPostExecute(final ArrayList<Restaurant> resultadoPrecio) {
+            super.onPostExecute(resultadoPrecio);
 
             if (dialog.isShowing()) {
                 dialog.dismiss();
             }
-
-            if(!resultado.isEmpty())
+            if(!resultadoPrecio.isEmpty())
             {
-                listVw.setAdapter(new RestaurantAdapter(getContext(), resultado));
+                adaptadorRestos = new RestaurantAdapterCompleto(getContext(), resultadoPrecio);
+                listVw.setAdapter(adaptadorRestos);
 
+                final Intent actividad = new Intent(getContext(), ActividadMapa.class);
+
+                listVw.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Restaurant unResto = resultadoPrecio.get(position);
+                        Log.d("Test", "00");
+                        //String item = ((TextView)view).getText().toString();
+                        Log.d("Test", resultadoPrecio.get(position) + "");
+                        Toast.makeText(getContext(), unResto.getNombre() + "", Toast.LENGTH_LONG).show();
+                        Log.d("Test", "02");
+
+
+                        actividad.putExtra("Direccion",unResto.getDireccion());
+                        actividad.putExtra("Restaurant", unResto);
+                        startActivity(actividad);
+                    }
+                });
+            }
+            else
+            {
+                Toast.makeText(getContext(), "No hay restaurantes con ese criterio", Toast.LENGTH_SHORT).show();
             }
         }
         @Override
         protected ArrayList<Restaurant> doInBackground(String... params) {
             String url = params[0];
 
+            Log.d("url doInB Precio",url);
             ArrayList<Restaurant> arrayRestaurantes=new ArrayList<>();
             Request request = new Request.Builder()
                     .url(url)
                     .build();
             try {
                 Response response = client.newCall(request).execute();
-                arrayRestaurantes  = parsearResultadoRestos(response.body().string());
+                arrayRestaurantes  = parsearResultadoRestosPrecio(response.body().string());
 
                 return arrayRestaurantes;
 
@@ -310,38 +405,43 @@ public class FragmentBuscarRestaurantes extends Fragment {
             }
         }
 
+
+        ArrayList<Restaurant> parsearResultadoRestosPrecio(String JSONstr) throws JSONException {
+            ArrayList<Restaurant> RestaurantArrayList = new ArrayList<>();
+
+            JSONObject json = new JSONObject(JSONstr);                 // Convierto el String recibido a JSONObject
+            //JSONObject jsonPrecio = new JSONObject("usuario");  // Array - una busqueda puede retornar varios resultados
+
+
+            JSONArray jsonRestaurantes = json.getJSONArray("restaurantes");
+
+            for (int i=0;i<jsonRestaurantes.length();i++) {
+
+                JSONObject jsonResultado = jsonRestaurantes.getJSONObject(i);
+
+                String jsonNombre = jsonResultado.getString("Nombre");
+                String jsonDireccion = jsonResultado.getString("Direccion");
+                int jsonPrecio = jsonResultado.getInt("Precio");
+                int jsonEstrellas = jsonResultado.getInt("Estrellas");
+                int jsonNumeroTel = jsonResultado.getInt("NumeroTelefono");
+
+
+                Log.d("parsearResulRes", "Nombre: " + jsonNombre + " Direccion: " + jsonDireccion);
+                Restaurant re = new Restaurant();
+                re.setPrecio(jsonPrecio);
+                re.setNombre(jsonNombre);
+                re.setNumeroTelefono(jsonNumeroTel);
+
+                re.setEstrellas(jsonEstrellas);
+                re.setDireccion(jsonDireccion);
+
+
+                RestaurantArrayList.add(re);                                                 // Agrego objeto d al array list
+                Log.d("RestaurantArrayList", "Precio:" +RestaurantArrayList.get(0).getPrecio());
+            }
+            return RestaurantArrayList;
+        }
     }
 
-    ArrayList<Restaurant> parsearResultadoRestos(String JSONstr) throws JSONException {
-        ArrayList<Restaurant> RestaurantArrayList = new ArrayList<>();
-
-        JSONObject json = new JSONObject(JSONstr);                 // Convierto el String recibido a JSONObject
-        //JSONObject jsonPrecio = new JSONObject("usuario");  // Array - una busqueda puede retornar varios resultados
-
-
-        JSONObject jsonResultado = json.getJSONObject("restaurantes");
-        String jsonNombre = jsonResultado.getString("Nombre");
-        String jsonDireccion =jsonResultado.getString("Direccion");
-        int jsonPrecio = jsonResultado.getInt("Precio");
-        int jsonEstrellas =jsonResultado.getInt("Estrellas");
-        int jsonNumeroTel = jsonResultado.getInt("NumeroTelefono");
-
-
-
-        Log.d("parsearResulRes", "Nombre: " + jsonNombre + " Direccion: " + jsonDireccion);
-        Restaurant re = new Restaurant();
-        re.setPrecio(jsonPrecio);
-        re.setNombre(jsonNombre);
-        re.setNumeroTelefono(jsonNumeroTel);
-
-        re.setEstrellas(jsonEstrellas);
-        re.setDireccion(jsonDireccion);
-
-
-
-        RestaurantArrayList.add(re);                                                 // Agrego objeto d al array list
-
-        return RestaurantArrayList;
-    }
 
 }
