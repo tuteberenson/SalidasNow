@@ -12,9 +12,8 @@ import java.io.Serializable;
 public class Restaurant implements Serializable {
 
 
-    String nombre;
-    String direccion;
-    String icono;
+   private String nombre, direccion, icono;
+    private int precio, estrellas, numeroTelefono;
 
     public Restaurant(String nombre, String direccion, String icono) {
         this.direccion = direccion;
@@ -22,4 +21,56 @@ public class Restaurant implements Serializable {
         this.icono = icono;
     }
 
+    public Restaurant()
+    {
+
+    }
+
+    public int getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(int precio) {
+        this.precio = precio;
+    }
+
+    public int getEstrellas() {
+        return estrellas;
+    }
+
+    public void setEstrellas(int estrellas) {
+        this.estrellas = estrellas;
+    }
+
+    public int getNumeroTelefono() {
+        return numeroTelefono;
+    }
+
+    public void setNumeroTelefono(int numeroTelefono) {
+        this.numeroTelefono = numeroTelefono;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getIcono() {
+        return icono;
+    }
+
+    public void setIcono(String icono) {
+        this.icono = icono;
+    }
 }

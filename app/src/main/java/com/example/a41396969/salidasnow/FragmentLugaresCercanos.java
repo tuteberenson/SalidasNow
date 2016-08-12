@@ -301,7 +301,7 @@ public class FragmentLugaresCercanos extends Fragment {
                 Log.d("Direccion:",d.direccion + " " + coord);*/
                 Restaurant d = new Restaurant(jsonNom, jsonAddress, jsonIcono);
                 restaurants.add(d);
-                Log.d("Restaurants:", d.direccion + " " + d.nombre);
+                Log.d("Restaurants:", d.getDireccion() + " " + d.getNombre());
             }
             return restaurants;
         }
@@ -312,7 +312,7 @@ public class FragmentLugaresCercanos extends Fragment {
             if (!Lrestaurants.isEmpty()) {
 
                 for (Restaurant r:Lrestaurants) {
-                    direcRestaurants.add(r.direccion);
+                    direcRestaurants.add(r.getDireccion());
                 }
                 /*
                 requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
@@ -329,7 +329,7 @@ public class FragmentLugaresCercanos extends Fragment {
                         Log.d("Test", "00");
                         //String item = ((TextView)view).getText().toString();
                         Log.d("Test", Lrestaurants.get(position) + "");
-                        Toast.makeText(getContext(), unResto.nombre + "", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), unResto.getNombre() + "", Toast.LENGTH_LONG).show();
                         Log.d("Test", "02");
                         direccion.setEnabled(false);
 

@@ -56,7 +56,7 @@ public class ActividadMapa extends AppCompatActivity  implements OnMapReadyCallb
 
         if (ActividadRecibida.getSerializableExtra("Restaurant")!=null) {
             Restaurant RestoSerialised = (Restaurant) ActividadRecibida.getSerializableExtra("Restaurant");
-            String url = RestoSerialised.direccion;
+            String url = RestoSerialised.getDireccion();
             Log.d("url",url);
             new GeolocalizacionTask().execute(url);
         }

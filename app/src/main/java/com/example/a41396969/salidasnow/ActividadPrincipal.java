@@ -130,7 +130,12 @@ public class ActividadPrincipal extends AppCompatActivity
              fragment = new FragmentLugaresCercanos();
             FT.replace(R.id.layoutPrincipal,fragment)
                     .commit();
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.buscoRestaurant) {
+
+            android.app.FragmentTransaction FT = getFragmentManager().beginTransaction();
+            fragment = new FragmentBuscarRestaurantes();
+            FT.replace(R.id.layoutPrincipal,fragment)
+                    .commit();
 
         } else if (id == R.id.nav_slideshow) {
 

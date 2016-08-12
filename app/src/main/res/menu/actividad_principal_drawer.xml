@@ -7,9 +7,9 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="Buscar por direccion" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/buscoRestaurant"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="--" />
+            android:title="Buscar restaurant" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_slideshow"

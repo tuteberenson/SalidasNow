@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_item_custom_shape">
+    >
     <TextView
         android:id="@+id/direc"
         android:layout_width="match_parent"

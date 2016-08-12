@@ -50,8 +50,8 @@ public class RestaurantAdapter extends BaseAdapter {
         TextView direccionTV = (TextView) view.findViewById(R.id.direc);
 
         Restaurant p = this.restaurants.get(position);
-        nombreTV.setText(p.nombre);
-        direccionTV.setText(p.direccion);
+        nombreTV.setText(p.getNombre());
+        direccionTV.setText(p.getDireccion());
         return view;
     }
 

@@ -1,0 +1,70 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="5dp"
+    tools:context="com.example.a41396969.salidasnow.FragmentBuscarRestaurantes">
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/Spneleccion"
+        android:background="@drawable/gradient_spinner"
+        android:layout_marginBottom="15px"
+
+        >
+    </Spinner>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/nombbuscar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ingrese el nombre del restaurant deseado"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="15dp"
+            android:textSize="25sp"
+            android:layout_centerVertical="true"
+            android:ellipsize="start"
+            android:gravity="center"
+            android:background="@drawable/edit_text_style"
+            />
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/SpnPrecio"
+            android:background="@drawable/gradient_spinner"
+            android:layout_marginBottom="15px">
+        </Spinner>
+
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/SpnCalidad"
+            android:background="@drawable/gradient_spinner"
+            android:layout_marginBottom="15px">
+        </Spinner>
+
+    </RelativeLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="Buscar"
+        android:id="@+id/btnBuscarRestaurantes"/>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/listVwBuscoRestaurantes">
+
+    </ListView>
+</LinearLayout>
+
+
+
