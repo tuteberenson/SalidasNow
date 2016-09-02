@@ -14,7 +14,7 @@ public class Restaurant implements Serializable {
 
    private String nombre, direccion, icono;
     private int precio, estrellas, numeroTelefono;
-
+    private double latitud, longitud;
     public Restaurant(String nombre, String direccion, String icono) {
         this.direccion = direccion;
         this.nombre = nombre;
@@ -72,5 +72,21 @@ public class Restaurant implements Serializable {
 
     public void setIcono(String icono) {
         this.icono = icono;
+    }
+
+    public double getLatitud() {
+        return latitud;
+    }
+
+    public void setLatitud(double latitud) {
+        this.latitud = latitud;
+    }
+
+    public double getLongitud() {
+        return longitud;
+    }
+
+    public void setLongitud(double longitud) {
+        this.longitud = longitud;
     }
 }
