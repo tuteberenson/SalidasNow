@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical" android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="25dp"
+        android:paddingLeft="85dp"
+        android:paddingRight="25dp"
+        android:paddingTop="80dp"
+
+        >
+        <ImageView
+            android:layout_width="450px"
+            android:layout_height="450px"
+            android:src="@drawable/icononuevo"
+            android:id="@+id/imgsalidas"/>
+
+    </LinearLayout>
+
+
