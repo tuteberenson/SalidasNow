@@ -78,7 +78,7 @@ public class LogIn extends AppCompatActivity {
         @Override
         protected void onPostExecute(ArrayList<Usuarios> resultado) {
             super.onPostExecute(resultado);
-             UsuarioCorrecto =false;
+            UsuarioCorrecto =false;
             passInvalida=false;
 
             dialog.dismiss();
@@ -88,8 +88,8 @@ public class LogIn extends AppCompatActivity {
 
                 for (Usuarios unUsuario :resultado) {
 
-                    comparadorUser= unUsuario.get_Username().compareTo(usernameIngresado);
-                    comparadorPass=unUsuario.get_Password().compareTo(passwordIngresada);
+                    comparadorUser = unUsuario.get_Username().compareTo(usernameIngresado);
+                    comparadorPass = unUsuario.get_Password().compareTo(passwordIngresada);
 
                     if (comparadorUser== 0 && comparadorPass ==0)
                     {
@@ -172,19 +172,19 @@ public class LogIn extends AppCompatActivity {
             return usuariosArrayList;
         }
     }
-    private class TraerUsuarioPorIdAsyncTask extends AsyncTask<String,Void,ArrayList<Usuarios>>
+    private class TraerUsuarioPorIdAsyncTask extends AsyncTask<String,Void,Usuarios>
     {
         private OkHttpClient client = new OkHttpClient();
         @Override
-        protected void onPostExecute(ArrayList<Usuarios> resultado) {
+        protected void onPostExecute(Usuarios resultado) {
             super.onPostExecute(resultado);
 
             if (UsuarioCorrecto) {
                 Intent ActividadDestino;
                 ActividadDestino = new Intent(LogIn.this, ActividadPrincipal.class);
-                Log.d("ListaUsuario", listaUsuario.get(0).toString());
+                //Log.d("ListaUsuario", listaUsuario.get(0).toString());
                 Bundle paquete = new Bundle();
-                paquete.putSerializable("listaUsuario", listaUsuario);
+                paquete.putSerializable("listaUsuario", resultado);
                 ActividadDestino.putExtras(paquete);
                 startActivity(ActividadDestino);
                 edTxUsername.setText("");
@@ -205,28 +205,30 @@ public class LogIn extends AppCompatActivity {
 
         }
         @Override
-        protected ArrayList<Usuarios> doInBackground(String... params) {
+        protected Usuarios doInBackground(String... params) {
             String url = params[0];
 
-            ArrayList<Usuarios> arrayUsuarios=new ArrayList<>();
+
+            Usuarios unUsuario=new Usuarios();
+
             Request request = new Request.Builder()
                     .url(url)
                     .build();
             try {
                 Response response = client.newCall(request).execute();
-                arrayUsuarios  = parsearResultado2(response.body().string());
+                unUsuario  = parsearResultado2(response.body().string());
 
-                return arrayUsuarios;
+                return unUsuario;
 
             } catch (IOException | JSONException e) {
                 Log.d("Error", e.getMessage());                          // Error de Network o al parsear JSON
-                return arrayUsuarios;
+                return unUsuario;
             }
         }
 
 
-        ArrayList<Usuarios> parsearResultado2(String JSONstr) throws JSONException {
-            ArrayList<Usuarios> usuariosArrayList = new ArrayList<>();
+        Usuarios parsearResultado2(String JSONstr) throws JSONException {
+           // Usuarios usu = new Usuarios();
 
             JSONObject json = new JSONObject(JSONstr);                 // Convierto el String recibido a JSONObject
             //JSONObject jsonUsuario = new JSONObject("usuario");  // Array - una busqueda puede retornar varios resultados
@@ -250,16 +252,7 @@ public class LogIn extends AppCompatActivity {
                 u.set_Username(jsonUsuario);
                 u.set_Password(jsonPassword);
 
-               /* u.get_Username();
-                u.get_Password();
-                u.get_Apellido();
-                u.get_Nombre();
-                u.get_NombreImg();
-                u.get_idUsuario();*/
-
-                usuariosArrayList.add(u);                                                 // Agrego objeto d al array list
-                listaUsuario.add(u);
-            return usuariosArrayList;
+                return u;
         }
     }
 }
