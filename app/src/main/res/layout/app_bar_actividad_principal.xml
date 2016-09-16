@@ -23,6 +23,11 @@
 
     <include layout="@layout/content_actividad_principal" />
 
+    <com.baoyz.swipemenulistview.SwipeMenuListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 
     <ImageView
         android:layout_width="match_parent"
