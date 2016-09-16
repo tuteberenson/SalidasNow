@@ -3,6 +3,7 @@ package com.example.a41396969.salidasnow;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Parcelable;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 
 public class LogIn extends AppCompatActivity {
 
-
+    SharedPreferences prefs =  getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
     EditText edTxUsername, edTxPassword;
     String passwordIngresada, usernameIngresado;
     boolean UsuarioCorrecto, passInvalida;
@@ -183,6 +184,18 @@ public class LogIn extends AppCompatActivity {
                 Intent ActividadDestino;
                 ActividadDestino = new Intent(LogIn.this, ActividadPrincipal.class);
                 //Log.d("ListaUsuario", listaUsuario.get(0).toString());
+
+
+
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putInt("idusuario", resultado.get_idUsuario());
+                editor.putString("nombre", resultado.get_Nombre());
+                editor.putString("apellido", resultado.get_Apellido());
+                editor.putString("username", resultado.get_Username());
+                editor.putString("password", resultado.get_Password());
+                editor.putString("imagen", resultado.get_NombreImg());
+                editor.commit();
+
                 Bundle paquete = new Bundle();
                 paquete.putSerializable("listaUsuario", resultado);
                 ActividadDestino.putExtras(paquete);
